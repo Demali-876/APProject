@@ -1,0 +1,6 @@
+[INFO ] 2021-10-24 19:11:35.047 [main] Driver - Test Info Message
+[DEBUG] 2021-10-24 19:11:35.056 [main] Driver - Test debug Message
+[ERROR] 2021-10-24 19:11:35.056 [main] Driver - Test error Message
+[TRACE] 2021-10-24 19:11:35.057 [main] Driver - Test trace Message
+[FATAL] 2021-10-24 19:11:35.057 [main] Driver - Test Fatal Message
+[WARN ] 2021-10-24 19:11:35.057 [main] Driver - Test Warning Message

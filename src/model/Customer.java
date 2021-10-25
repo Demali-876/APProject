@@ -1,4 +1,4 @@
-package Hibernate;
+package model ;
 
 import java.io.Serializable;
 import java.util.List;
@@ -18,7 +18,10 @@ import javax.transaction.Transaction;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;  
+import org.hibernate.cfg.Configuration;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
  
 	@Entity  
 	@Table(name= "customer")   
