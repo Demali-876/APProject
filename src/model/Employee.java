@@ -91,7 +91,7 @@ public class Employee implements Serializable
 		return "EmpID: " + EmpID + "\nEmpNanme: " + EmpName+ "\nEmpPassword: " + EmpPassword+ "\n";
 	}
 	
-	
+	//for server 
 	public static class SessionFactoryBuilderEmployee{
 		private static SessionFactory sessionFactory = null;
 		public static SessionFactory getSessionFactory() {
