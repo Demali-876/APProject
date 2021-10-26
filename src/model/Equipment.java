@@ -102,6 +102,8 @@ public class Equipment implements Serializable
 		return "EquipID: " + EquipID + "\nEquipNanme: " + EquipName+ "\nEquipStatus: " + EquipStatus+ "\nEquipCategory: "
 				+ EquipCategory+ "\n";
 	}
+	
+	//for server
 	public Equipment selectEquipmentByID(int EquipID) throws Exception, SystemException
 	{
 		Session session = SessionFactoryBuilder.getSessionFactory().getCurrentSession();;
