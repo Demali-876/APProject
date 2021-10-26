@@ -96,7 +96,14 @@ import org.apache.logging.log4j.Logger;
 		public void setCusBal(double CusAccBal) {    
 		    this.CusAccBal = CusAccBal;    
 		}
+		 @Override
+		public String toString() {
+			return "CusID: " + CusID + "\nCusNanme: " + CusName+ "\nCusPassword: " + CusPassword+ "\nCusAccBal: "
+					+ CusAccBal+ "\n";
+		}
 		 
+		 
+		 //for server
 		public Customer selectCustomerByID(int CusID) throws Exception, SystemException
 		{
 			Session session = SessionFactoryBuilderCustomer.getSessionFactory().getCurrentSession();;
