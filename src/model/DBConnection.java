@@ -7,10 +7,13 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import controller.Driver;
+
 public class DBConnection 
 {
     private static Connection con = null;
 	
+    private static final Logger logger = LogManager.getLogger(DBConnection.class);
 	
 	public Connection getConnection() 
 	{
@@ -23,6 +26,15 @@ public class DBConnection
 				con = DriverManager.getConnection(url, "root", "");
 			} 
 			catch (SQLException e) 
+			{
+				e.printStackTrace();
+				logger.fatal("An sql exception occured when trying to get a connection to the database");
+			}
+			catch(NullPointerException e) 
+			{
+				e.printStackTrace();
+			}
+			catch(Exception e) 
 			{
 				e.printStackTrace();
 			}

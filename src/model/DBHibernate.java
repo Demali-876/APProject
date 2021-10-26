@@ -15,7 +15,8 @@ import org.apache.logging.log4j.Logger;
 
 
 
-public class DBHibernate {
+public class DBHibernate 
+{
 	
 	
 		

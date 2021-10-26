@@ -20,6 +20,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import controller.Driver;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +30,10 @@ import org.apache.logging.log4j.Logger;
 @Entity  
 @Table(name= "employee")   
 
-public class Employee implements Serializable {
+public class Employee implements Serializable 
+{
+	
+	private static final Logger logger = LogManager.getLogger(Employee.class);
 	
 	/**
 	 * 

@@ -20,13 +20,20 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import controller.Driver;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
  
+//Do we need a toString method?
+
 	@Entity  
 	@Table(name= "customer")   
 
-	public class Customer extends DBHibernate implements Serializable{
+	public class Customer extends DBHibernate implements Serializable
+	{
+		
+		private static final Logger logger = LogManager.getLogger(Customer.class);
 		
 		/**
 		 * 
@@ -124,10 +131,12 @@ import org.apache.logging.log4j.Logger;
 				Trans.commit();
 				JOptionPane.showMessageDialog(null, "Customer Added Successfully", "", JOptionPane.INFORMATION_MESSAGE);
 			
-			}catch(RuntimeException ex)
-			{//can add logger in this
+			}
+			catch(RuntimeException ex)
+			{
 				JOptionPane.showMessageDialog(null,"Customer was not Added","",JOptionPane.ERROR_MESSAGE);
 				Trans.rollback();
+				logger.fatal("Customer was not added due to a runtime exception");
 			}
 			session.flush();
 			session.close();
@@ -177,6 +186,8 @@ import org.apache.logging.log4j.Logger;
 			session.close();
 			
 		}
+		
+		
 		
 		// test code 
 			public static class SessionFactoryBuilderCustomer {
