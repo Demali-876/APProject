@@ -97,7 +97,11 @@ public class Equipment implements Serializable
 	    this.EquipCategory= EquipCategory;    
 	}
 	 
-	 
+	 @Override
+	public String toString() {
+		return "EquipID: " + EquipID + "\nEquipNanme: " + EquipName+ "\nEquipStatus: " + EquipStatus+ "\nEquipCategory: "
+				+ EquipCategory+ "\n";
+	}
 	public Equipment selectEquipmentByID(int EquipID) throws Exception, SystemException
 	{
 		Session session = SessionFactoryBuilder.getSessionFactory().getCurrentSession();;
