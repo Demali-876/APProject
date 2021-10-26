@@ -86,6 +86,11 @@ public class Employee implements Serializable
 	public void setPassword(String Password) {    
 	    this.EmpPassword = Password;    
 	}
+	@Override
+	public String toString() {
+		return "EmpID: " + EmpID + "\nEmpNanme: " + EmpName+ "\nEmpPassword: " + EmpPassword+ "\n";
+	}
+	
 	
 	public static class SessionFactoryBuilderEmployee{
 		private static SessionFactory sessionFactory = null;
