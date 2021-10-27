@@ -310,11 +310,11 @@ public class Request implements Serializable {
 				
 				session.delete(selectRequestByID(requestID, CusID, EquipId));
 				Trans.commit();
-				JOptionPane.showMessageDialog(null, "Request Records Updated Successfully","", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Request Records delete Successfully","", JOptionPane.INFORMATION_MESSAGE);
 			
 			}catch(RuntimeException ex)
 			{//can add logger in this
-				JOptionPane.showMessageDialog(null,"Requestrecords was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,"Request records was not deleted Successfully","",JOptionPane.ERROR_MESSAGE);
 				Trans.rollback();
 			}catch(SQLException e) 
 			{
