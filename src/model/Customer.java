@@ -183,7 +183,7 @@ import org.hibernate.cfg.Configuration;
 			
 		}
 		
-		// test code 
+		
 			public static class SessionFactoryBuilderCustomer {
 			private static SessionFactory sessionFactory = null;
 			public static SessionFactory getSessionFactory() {
