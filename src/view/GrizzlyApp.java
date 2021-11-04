@@ -14,11 +14,12 @@ import javax.swing.JMenuItem;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public class GrizzlyApp {
+public class GrizzlyApp{
 	private JFrame frame;
 	private JButton button;
 	private JLabel userIdLabel;
@@ -49,6 +50,7 @@ public class GrizzlyApp {
 	
 	public void initializeLoginComponents() {//initializing the attributes that will be use for login screen
 		frame = new JFrame("Grizzly App");
+		frame.setTitle("Grizzly App");
 		frame.setLayout(new FlowLayout(FlowLayout.LEADING));
 		
 		button = new JButton("Login");
@@ -74,7 +76,7 @@ public class GrizzlyApp {
 		buttonPanel.add(button);
 	}
 	
-	public void configFrame() {//add components to the frame finish setting up frame
+	public void configFrame() {//add components to the frame to finish setting up frame
 		frame.add(userIdPanel);
 		frame.add(passwordPanel);
 		frame.add(buttonPanel);
@@ -112,12 +114,12 @@ public class GrizzlyApp {
 		frame.getContentPane().removeAll();
 		frame.repaint();
 		//Clears out all the components previously added to frame
+		frame.setLayout(new BorderLayout());//sets frame's layout manager back to default
 		frame.setTitle("Grizzly App - Dashboard");
-		frame.setJMenuBar(menuBar);
 		frame.add(desktop);
+		frame.setJMenuBar(menuBar);
 		frame.setSize(1260,720);
 		frame.setVisible(true);
-		frame.setLayout(null);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -214,14 +216,14 @@ public class GrizzlyApp {
 		rentEquipment.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//desktop.add(new RentEquipmentFrame());
+				desktop.add(new RentEquipmentFrame());
 			}
 		});
 		
 		viewTransaction.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//desktop.add(new ViewTransactionFrame());
+				desktop.add(new ViewTransactionFrame());
 			}
 		});
 	}
@@ -231,28 +233,28 @@ public class GrizzlyApp {
 		viewRentRequest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//desktop.add(new ViewRentRequestFrame());
+				desktop.add(new ViewRentRequestFrame());
 			}
 		});
 		
 		viewInventory.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//desktop.add(new ViewInventoryFrame());
+				desktop.add(new ViewInventoryFrame());
 			}
 		});
 		
 		scheduleEquipment.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//desktop.add(new ScheduleEquipmentFrame());
+				desktop.add(new ScheduleEquipmentFrame());
 			}
 		});
 		
 		transDoc.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//desktop.add(new TransactionDocumentFrame());
+				desktop.add(new TransactionDocumentFrame());
 			}
 		});
 	}
