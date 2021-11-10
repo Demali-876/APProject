@@ -1,4 +1,4 @@
-package Hibernate;
+package model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,12 +20,17 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 
 @Entity  
 @Table(name= "employee")   
 
 public class Employee implements Serializable {
+	
+	private static final Logger logger = LogManager.getLogger(Employee.class);
 	
 	/**
 	 * 
@@ -112,14 +117,43 @@ public class Employee implements Serializable {
 		}
 	
 	 
-		public Employee selectEmployeeByID(int EmpID) throws Exception, SystemException
+		public Employee selectEmployeeByID(int EmpID)
 		{
-		Session session = SessionFactoryBuilderEmployee.getSessionFactory().getCurrentSession();;
-		Transaction Trans = (Transaction) session.beginTransaction();
-		Employee obj = (Employee) session.get(Employee.class, EmpID);
-		Trans.commit();
-		session.close();
-		return obj;
+			Session session = SessionFactoryBuilderEmployee.getSessionFactory().getCurrentSession();;
+			Transaction Trans = null;
+			Employee obj = null;
+		
+			try 
+			{
+				Trans = (Transaction) session.beginTransaction();
+				obj = (Employee) session.get(Employee.class, EmpID);
+				Trans.commit();
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select an employee by id in the employee table");
+			}
+			catch(RuntimeException e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select an employee by id in the employee table");
+			
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select an employee by id in the employee table");
+			
+			}
+			finally 
+			{
+				session.close();
+			
+			}
+			
+			
+			return obj;
 		}
 	
 	
@@ -127,40 +161,102 @@ public class Employee implements Serializable {
 	public List<Employee> selectAllCustomer() throws Exception, SystemException
 	{
 		List <Employee> EmployeeList = null;
+		Transaction Trans = null ;
 		Session session = SessionFactoryBuilderEmployee.getSessionFactory().getCurrentSession();;
-		Transaction Trans = (Transaction) session.beginTransaction();
-		EmployeeList = session.createSQLQuery("SELECT * FROM employee").getResultList();
-		Trans.commit();
-		session.close();
+		
+		try 
+		{
+			Trans = (Transaction) session.beginTransaction();
+			EmployeeList = session.createSQLQuery("SELECT * FROM employee").getResultList();
+			Trans.commit();
+		}
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select all employees in the employee table");
+		}
+		catch(RuntimeException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select all employees in the employee table");
+		
+		
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select all employees in the employee table");
+			
+		}
+		finally 
+		{
+			session.close();
+		
+		}
+		
 		return EmployeeList;
 	}
 	
-	public void CreateEmployee (Employee Emp) throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SystemException
+	public void CreateEmployee (Employee Emp)
 	{
 		Session session = SessionFactoryBuilderEmployee.getSessionFactory().getCurrentSession();;
 		Transaction Trans = null;
 		
-		try {
+		try 
+		{
 			Trans = (Transaction) session.beginTransaction();
 			session.save(Emp);
 			Trans.commit();
 			JOptionPane.showMessageDialog(null, "Employee Added Successfully", "", JOptionPane.INFORMATION_MESSAGE);
+			logger.info("A new record was added in the employee table id: " + Emp.EmpID );
 		
-		}catch(RuntimeException ex)
-		{//can add logger in this
-			JOptionPane.showMessageDialog(null,"Employee was not Added","",JOptionPane.ERROR_MESSAGE);
-			Trans.rollback();
 		}
-		session.flush();
-		session.close();
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to add a record to the employee table");
+		}
+		catch(RuntimeException ex)
+		{
+			JOptionPane.showMessageDialog(null,"Employee was not Added","",JOptionPane.ERROR_MESSAGE);
+			try 
+			{
+				Trans.rollback();
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to add a record to the employee table");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to add a record to the employee table");
+			}
+			
+			
+			logger.error( ex.getClass().getName() +  " exception occured when trying to add a record to the employee table");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to add a record to the employee table");
+		}
+		finally 
+		{
+			session.flush();
+			session.close();
+		}
+		
 	}
 	
-	public void UpdateEmployee (Employee Emp) throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SystemException
+	public void UpdateEmployee (Employee Emp)
 	{
 		Session session = SessionFactoryBuilderEmployee.getSessionFactory().getCurrentSession();;
 		Transaction Trans = null;
 		
-		try {
+		try 
+		{
 			Trans = (Transaction) session.beginTransaction();
 			Employee obj = (Employee) session.get(Employee.class, this.EmpID);
 			obj.setId(this.EmpID);
@@ -170,21 +266,54 @@ public class Employee implements Serializable {
 			Trans.commit();
 			JOptionPane.showMessageDialog(null, "Employee Records Updated Successfully","", JOptionPane.INFORMATION_MESSAGE);
 		
-		}catch(RuntimeException ex)
-		{//can add logger in this
-			JOptionPane.showMessageDialog(null,"Employee records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
-			Trans.rollback();
 		}
-		session.flush();
-		session.close();
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to update a record in the employee table");
+		}
+		catch(RuntimeException ex)
+		{
+			JOptionPane.showMessageDialog(null,"Employee records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
+			
+			try 
+			{
+				Trans.rollback();
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to update a record in the employee table");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to update a record in the employee table");
+			}
+			
+			
+			logger.error(  ex.getClass().getName() +  " exception occured when trying to update a record in the employee table");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to update a record in the employee table");
+		}
+		finally 
+		{
+			session.flush();
+			session.close();
+		}
+		
 	}
 	
-	public Boolean DeleteEmployee(int EmpID) throws Exception, SystemException
+	public Boolean DeleteEmployee(int EmpID)
 	{
 		Session session = SessionFactoryBuilderEmployee.getSessionFactory().getCurrentSession();;
 		Transaction Trans = null;
 		
-		try {
+		try 
+		{
 			Trans = (Transaction) session.beginTransaction();
 			Employee obj = (Employee) session.get(Employee.class, this.EmpID);
 			obj.setId(this.EmpID);
@@ -193,14 +322,46 @@ public class Employee implements Serializable {
 			session.delete(obj);
 			Trans.commit();
 			JOptionPane.showMessageDialog(null, "Employee Records Updated Successfully","", JOptionPane.INFORMATION_MESSAGE);
+			
+			logger.info("deleted a record from the employee table with employee " + EmpID);
 		
-		}catch(RuntimeException ex)
-		{//can add logger in this
-			JOptionPane.showMessageDialog(null,"Employee records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
-			Trans.rollback();
 		}
-		session.flush();
-		session.close();
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to delete a record in the employee table");
+		}
+		catch(RuntimeException ex)
+		{
+			JOptionPane.showMessageDialog(null,"Employee records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
+			try 
+			{
+				Trans.rollback();
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to delete a record in the employee table");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to delete a record in the employee table");
+			}
+			
+			
+			logger.error(  ex.getClass().getName() +  " exception occured when trying to delete a record in the employee table");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to delete a record in the employee table");
+		}
+		finally 
+		{
+			session.flush();
+			session.close();
+		}
 		return null;
 	}
 

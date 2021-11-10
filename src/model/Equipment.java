@@ -1,4 +1,4 @@
-package Hibernate;
+package model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,11 +21,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration; 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Entity  
 @Table(name= "equipment")  
 
 public class Equipment implements Serializable {
+	
+	private static final Logger logger = LogManager.getLogger(Equipment.class);
 
 	/**
 	 * 
@@ -122,13 +126,43 @@ public class Equipment implements Serializable {
 	
 	 
 	 // server side 
-	public Equipment selectEquipmentByID(int EquipID) throws Exception, SystemException
+	public Equipment selectEquipmentByID(int EquipID)
 	{
 		Session session = SessionFactoryBuilderEquipment.getSessionFactory().getCurrentSession();;
-		Transaction Trans = (Transaction) session.beginTransaction();
-		Equipment obj = (Equipment) session.get(Equipment.class, EquipID);
-		Trans.commit();
-		session.close();
+		Transaction Trans = null;
+		Equipment obj = null ;
+		
+		try 
+		{
+			obj = (Equipment) session.get(Equipment.class, EquipID);
+			Trans = (Transaction) session.beginTransaction();
+			Trans.commit();
+		}
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select  equipment by id in the equipment table");
+		}
+		catch(RuntimeException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select  equipment by id in the equipment table");
+		
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select equipment by id in the equipment table");
+		
+		}
+		
+		finally 
+		{
+			session.close();
+		}
+		
+		
+		
 		return obj;
 		
 		
@@ -136,43 +170,105 @@ public class Equipment implements Serializable {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Equipment> selectAllEquipment() throws Exception, SystemException
+	public List<Equipment> selectAllEquipment()
 	{
 		List <Equipment> EquipmentList = null;
 		Session session = SessionFactoryBuilderEquipment.getSessionFactory().getCurrentSession();;
-		Transaction Trans = (Transaction) session.beginTransaction();
-		EquipmentList = session.createSQLQuery("SELECT * FROM equipment").getResultList();
-		Trans.commit();
-		session.close();
+		
+		try 
+		{
+			Transaction Trans = (Transaction) session.beginTransaction();
+			EquipmentList = session.createSQLQuery("SELECT * FROM equipment").getResultList();
+			Trans.commit();
+		}
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select all equipment from the equipment table");
+		}
+		catch(RuntimeException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select all equipment from the equipment table");
+		
+		
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to select all equipment from the equipment table");
+		
+		}
+		finally 
+		{
+			session.close();
+		}
+		
+		
 		return EquipmentList;
 	}
 	
-	public void InsertEquipment (Equipment EQ) throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SystemException
+	public void InsertEquipment (Equipment EQ)
 	{
 		Session session = SessionFactoryBuilderEquipment.getSessionFactory().getCurrentSession();;
 		Transaction Trans = null;
 		
-		try {
+		try 
+		{
 			Trans = (Transaction) session.beginTransaction();
 			session.save(EQ);
 			Trans.commit();
 			JOptionPane.showMessageDialog(null, "Equipment Added Successfully", "", JOptionPane.INFORMATION_MESSAGE);
+			logger.info("A new record was added in the equipment table id: " + EQ.EquipID );
 		
-		}catch(RuntimeException ex)
-		{//can add logger in this
-			JOptionPane.showMessageDialog(null,"Equipment was not Added","",JOptionPane.ERROR_MESSAGE);
-			Trans.rollback();
 		}
-		session.flush();
-		session.close();
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to add a record to the equipment table");
+		}
+		catch(RuntimeException ex)
+		{
+			JOptionPane.showMessageDialog(null,"Equipment was not Added","",JOptionPane.ERROR_MESSAGE);
+			try 
+			{
+				Trans.rollback();
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to add a record to the equipment table");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to add a record to the equipment table");
+			}
+			
+			
+			logger.error(  ex.getClass().getName() +  " exception occured when trying to add a record to the equipment table");
+
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to add a record to the equipment table");
+		
+		}
+		finally 
+		{
+			session.flush();
+			session.close();
+		}
 	}
 	
-	public void UpdateEquip (Equipment EQ) throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SystemException
+	public void UpdateEquip (Equipment EQ)
 	{
 		Session session = SessionFactoryBuilderEquipment.getSessionFactory().getCurrentSession();;
 		Transaction Trans = null;
 		
-		try {
+		try 
+		{
 			Trans = (Transaction) session.beginTransaction();
 			Equipment obj = (Equipment) session.get(Equipment.class, this.EquipID);
 			obj.setEquipID((int) this.EquipID);
@@ -183,34 +279,99 @@ public class Equipment implements Serializable {
 			Trans.commit();
 			JOptionPane.showMessageDialog(null, "Equipment Records Updated Successfully","", JOptionPane.INFORMATION_MESSAGE);
 		
-		}catch(RuntimeException ex)
-		{//can add logger in this
-			JOptionPane.showMessageDialog(null,"Equipment records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
-			Trans.rollback();
 		}
-		session.flush();
-		session.close();
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to update a record in the equipment table");
+		}
+		catch(RuntimeException ex)
+		{
+			JOptionPane.showMessageDialog(null,"Equipment records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
+			try 
+			{
+				Trans.rollback();
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to update a record in the equipment table");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to update a record in the equipment table");
+			}
+			
+			
+			logger.error(  ex.getClass().getName() +  " exception occured when trying to update a record in the employee table");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to update a record in the equipment table");
+		}
+		finally 
+		{
+			session.flush();
+			session.close();
+		}
+		
 	}
 	
-	public void DeleteEquipment(int EquipID) throws Exception, SystemException
+	public void DeleteEquipment(int EquipID)
 	{
 		Session session = SessionFactoryBuilderEquipment.getSessionFactory().getCurrentSession();;
 		Transaction Trans = null;
 		
-		try {
+		try 
+		{
 			Trans = (Transaction) session.beginTransaction();
 			
 			session.delete(selectEquipmentByID(EquipID));
 			Trans.commit();
 			JOptionPane.showMessageDialog(null, "Equipment Records Updated Successfully","", JOptionPane.INFORMATION_MESSAGE);
+			
+			logger.info("deleted a record from the equipment table with equipment " + EquipID);
 		
-		}catch(RuntimeException ex)
-		{//can add logger in this
-			JOptionPane.showMessageDialog(null,"Equipment records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
-			Trans.rollback();
 		}
-		session.flush();
-		session.close();
+		catch(SystemException e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to delete a record in the equipment table");
+		}
+		catch(RuntimeException ex)
+		{
+			JOptionPane.showMessageDialog(null,"Equipment records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
+			try 
+			{
+				Trans.rollback();
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to delete a record in the equipment table");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error( e.getClass().getName() + " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() +  " exception occured when trying to delete a record in the equipment table");
+			}
+			
+			
+			logger.error(  ex.getClass().getName() +  " exception occured when trying to delete a record in the equipment table");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to delete a record in the equipment table");
+		}
+		finally 
+		{
+			session.flush();
+			session.close();
+		}
+		
 	}
 	
 	

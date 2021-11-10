@@ -1,36 +1,51 @@
-package Hibernate;
-
+package model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import controller.Driver;
 
 public class DBConnection 
 {
-public static void main(String[] args) // remove main method 
-	{
+    private static Connection con = null;
 	
-		String url="jdbc:mysql://localhost:3306/grizzlydb";
-		String username = "root";
-		String password = "";
-		try {
-		Connection connection = DriverManager.getConnection(url, username, password);
-		System.out.print("Connected to database");
-		
-		String sql = "INSERT INTO employee (EmpID,EmpName,EmpPassword) VALUES (?,?,?)";// test connectivity
-		
-		// used to test database connectivity
-		PreparedStatement statement = connection.prepareStatement(sql);
-		statement.setInt(1, 11987);
-		statement.setString(2, " blue boy ");
-		statement.setString(3, "tets");
-		statement.executeUpdate();
-						
-			}catch (SQLException e) 
+    private static final Logger logger = LogManager.getLogger(DBConnection.class);
+	
+	public Connection getConnection() 
+	{
+		if(con == null) 
+		{
+			String url =  "jdbc:mysql://localhost:3306/grizzlydb";
+			
+			try 
 			{
-			System.out.print("Database did not connect\n");
-			e.printStackTrace();
+				con = DriverManager.getConnection(url, "root", "");
+			} 
+			
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+				logger.error("An sql exception occured when trying to get a connection to the database");
 			}
+			catch(NullPointerException e) 
+			{
+				e.printStackTrace();
+				logger.error("An null pointer exception occured when trying to get a connection to the database");
+			}
+			
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error(e.getClass().getName()  +  " exception occured when trying to get a connection to the database");
+			}
+		}
+		
+		return con;
+		
 	}
-}   
+
+}

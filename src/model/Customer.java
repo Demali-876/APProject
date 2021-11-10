@@ -1,4 +1,4 @@
-package Hibernate;
+package model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,11 +19,16 @@ import javax.transaction.Transaction;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;  
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
  
 	@Entity  
 	@Table(name= "customer")   
 
 	public class Customer implements Serializable{
+		
+		private static final Logger logger = LogManager.getLogger(Customer.class);
 		
 		/**
 		 * 
@@ -95,56 +100,141 @@ import org.hibernate.cfg.Configuration;
 		}
 		 
 		 // for server 
-		public Customer selectCustomerByID(int CusID) throws Exception, SystemException
+		public Customer selectCustomerByID(int CusID)
 		{
 			Session session = SessionFactoryBuilderCustomer.getSessionFactory().getCurrentSession();;
-			Transaction Trans = (Transaction) session.beginTransaction();
-			Customer obj = (Customer) session.get(Customer.class, CusID);
+			Transaction Trans = null;
+			Customer obj = null;
+			
+			try 
+			{
+			Trans = (Transaction) session.beginTransaction();
+			obj = (Customer) session.get(Customer.class, CusID);
 			Trans.commit();
-			session.close();
+			}
+			catch(SystemException e) 
+			{
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select a customer by id ");
+				e.printStackTrace();
+			}
+			catch(RuntimeException e )
+			{
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select a customer by id ");
+				e.printStackTrace();
+			}
+			catch(Exception e) 
+			{
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select a customer by id ");
+				e.printStackTrace();
+			}
+			
+			finally 
+			{
+				session.close();
+			}
+			
 			return obj;
 			
 		}
 		
 		@SuppressWarnings("unchecked")
-		public List<Customer> selectAllCustomer() throws Exception, SystemException
+		public List<Customer> selectAllCustomer()
 		{
 			List <Customer> CustomerList = null;
 			Session session = SessionFactoryBuilderCustomer.getSessionFactory().getCurrentSession();;
-			Transaction Trans = (Transaction) session.beginTransaction();
-			CustomerList = session.createSQLQuery("SELECT * FROM customer").getResultList();
-			Trans.commit();
-			session.close();
+			Transaction Trans = null;
+			try 
+			{
+				Trans = (Transaction) session.beginTransaction();
+				CustomerList = session.createSQLQuery("SELECT * FROM customer").getResultList();
+				Trans.commit();
+			}
+			catch(SystemException e )
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select all customers");
+			}
+			catch(RuntimeException e )
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select all customers  ");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to select all customers");
+			}
+			finally 
+			{
+				
+				session.close();
+			}
+			
 			return CustomerList;
 		}
 		
-		public void CreateCustomer (Customer Cus) throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SystemException
+		public void CreateCustomer (Customer Cus)
 		{
 			Session session = SessionFactoryBuilderCustomer.getSessionFactory().getCurrentSession();;
 			Transaction Trans = null;
 			
-			try {
+			try 
+			{
 				Trans = (Transaction) session.beginTransaction();
 				session.save(Cus);
 				Trans.commit();
 				JOptionPane.showMessageDialog(null, "Customer Added Successfully", "", JOptionPane.INFORMATION_MESSAGE);
+				logger.info("A new record was added in the customer table id: " + Cus.CusID );
 			
-			}catch(RuntimeException ex)
-			{//can add logger in this
-				JOptionPane.showMessageDialog(null,"Customer was not Added","",JOptionPane.ERROR_MESSAGE);
-				Trans.rollback();
 			}
-			session.flush();
-			session.close();
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to create a new record in the customer table ");
+			}
+			catch(RuntimeException ex)
+			{
+				JOptionPane.showMessageDialog(null,"Customer was not Added","",JOptionPane.ERROR_MESSAGE);
+				
+				try 
+				{
+					Trans.rollback();
+				} 
+				catch (SystemException e) 
+				{
+					e.printStackTrace();
+					logger.error(  e.getClass().getName() +  " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() + " exception when creating a new record in the customer table " );
+				}
+				catch(Exception e ) 
+				{
+					e.printStackTrace();
+					logger.error(  e.getClass().getName() +  " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() + " exception when creating a new record in the customer table " );
+				}
+				
+				ex.printStackTrace();
+				logger.error( ex.getClass().getName() +  " exception occured when trying to create a new record in the customer table ");
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to create a new record in the customer table ");
+			}
+			finally 
+			{
+				session.flush();
+				session.close();
+			}
+			
 		}
 		
 
-		public void UpdateCustomer (Customer Cus) throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SystemException
+		public void UpdateCustomer (Customer Cus)
 		{
 			Session session = SessionFactoryBuilderCustomer.getSessionFactory().getCurrentSession();;
 			Transaction Trans = null;
 			
-			try {
+			try 
+			{
 				Trans = (Transaction) session.beginTransaction();
 				Customer obj = (Customer) session.get(Customer.class, this.CusID);
 				obj.setCusId(this.CusID);
@@ -155,31 +245,97 @@ import org.hibernate.cfg.Configuration;
 				Trans.commit();
 				JOptionPane.showMessageDialog(null, "Customer Records Updated Successfully","", JOptionPane.INFORMATION_MESSAGE);
 			
-			}catch(RuntimeException ex)
-			{//can add logger in this
-				JOptionPane.showMessageDialog(null,"Customer records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
-				Trans.rollback();
 			}
-			session.flush();
-			session.close();
+			
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to update a record in the customer table  " );
+			}
+			catch(RuntimeException ex)
+			{
+				JOptionPane.showMessageDialog(null,"Customer records was not updated Successfully","",JOptionPane.ERROR_MESSAGE);
+				ex.printStackTrace();
+				try 
+				{
+					Trans.rollback();
+				} 
+				catch (SystemException e) 
+				{
+					e.printStackTrace();
+					logger.error(  e.getClass().getName() +  " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() + " exception when updating a record in the customer table" );
+				}
+				catch(Exception e ) 
+				{
+					e.printStackTrace();
+					logger.error(  e.getClass().getName() +  " exception occured when trying to rollback the transaction after a " +  ex.getClass().getName() + " exception when updating a record in the customer table  " );
+				}
+				
+				logger.error(  ex.getClass().getName() +  " exception occured when trying to update a record in the customer table  " );
+			
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to update a record in the customer table  " );
+				
+			}
+			
+			finally 
+			{
+				session.flush();
+				session.close();
+			}
+			
 		}
 		
-		public void DeleteCustomer(int CusID) throws Exception, SystemException
+		public void DeleteCustomer(int CusID)
 		{
 			Session session = SessionFactoryBuilderCustomer.getSessionFactory().getCurrentSession();;
 			Transaction Trans= null;
-			try{
+			try
+			{
 				Trans=(Transaction)session.beginTransaction();
 				session.delete(selectCustomerByID(CusID));
 				Trans.commit();
 				JOptionPane.showMessageDialog(null, "Customer Records Deleted Successfully","", JOptionPane.INFORMATION_MESSAGE);
-			}catch(RuntimeException ex)
+				
+				logger.info("deleted a record from the customer table with customer " + CusID );
+			}
+			catch(SystemException e) 
+			{
+				e.printStackTrace();
+				logger.error(  e.getClass().getName() +  " exception occured when trying to delete a record in the customer table  " );
+			}
+			catch(RuntimeException ex)
 			{
 				JOptionPane.showMessageDialog(null,"Customer records was deleted Successfully","",JOptionPane.ERROR_MESSAGE);
-				Trans.rollback();
+				try 
+				{
+					Trans.rollback();
+				} 
+				catch (SystemException e) 
+				{
+					logger.error( e.getClass().getName() + " exception occured after when trying to rollback the transaction after " +   ex.getClass().getName() +  " exception occured when trying to delete a record in the customer table  " );
+					e.printStackTrace();
+				}
+				catch(Exception e) 
+				{
+					e.printStackTrace();
+					logger.error( e.getClass().getName() + " exception occured after when trying to rollback the transaction after " +   ex.getClass().getName() +  " exception occured when trying to delete a record in the customer table  " );
+				}
+				
+				logger.error(  ex.getClass().getName() +  " exception occured when trying to delete a record in the customer table  " );
 			}
-			session.flush();
-			session.close();
+			catch(Exception e) 
+			{
+				logger.error(  e.getClass().getName() +  " exception occured when trying to delete a record in the customer table  " );
+			}
+			finally 
+			{
+				session.flush();
+				session.close();
+			}
 			
 		}
 		

@@ -5,6 +5,7 @@ import java.sql.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.util.*;
 
 public class DBProcess implements Serializable
 {
@@ -17,9 +18,9 @@ public class DBProcess implements Serializable
 	
 	public DBProcess() 
 	{
-		staffId = 0;
-		cusId = 0;
-		equipId = 0;
+		staffId = -1;
+		cusId = -1;
+		equipId = -1;
 	}
 	
 	public DBProcess(int staffId, int cusId, int equipId) 
@@ -62,28 +63,32 @@ public class DBProcess implements Serializable
 			
 			pStat.execute();
 			
+			logger.info("added a new record to the process table for customer " + cusId);
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
-			logger.fatal("An sql execption occcured when creating a new record in the process table");
+			logger.error("An sql execption occcured when creating a new record in the process table");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("An null pointer exception occcured when creating a new record in the process table");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() + " exception occured when creating a new record in the process table");
 		}
 		
 	}
 	
-	
-	// can be modified to get a string out of this 
-	public void select(int cusId , int equipId, int staffId ,  Connection con) 
+	//should only return one record 
+	public DBProcess select(int cusId , int equipId, int staffId ,  Connection con) 
 	{
 		String sql = "select * from Process where cusId = ? and equipId = ? and staffId = ? ;";
+		DBProcess process = null ; 
+		
 		try 
 		{
 			PreparedStatement pStat = con.prepareStatement(sql);
@@ -91,61 +96,84 @@ public class DBProcess implements Serializable
 			pStat.setInt(2, equipId);
 			pStat.setInt(3, staffId);
 			ResultSet results = pStat.executeQuery();
-			String output = "";
-			while(results.next()) 
+			
+			
+			if(results.next()) 
 			{
-				output += "\n Customer Id: " + results.getString("cusId") ;
-				output += "\n Equipment Id: " + results.getString("equipId");
-				output += "\n Staff Id: " + results.getString("staffId");
+				process = new DBProcess();
+				process.setCusId( results.getInt("cusId") ) ;
+				process.setEquipId( results.getInt("equipId") ) ;
+				process.setStaffId( results.getInt("staffId") ) ;
 			}
 			
-			System.out.println(output);
+			
 			
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An sql exception occured when trying to select with conditions for cusId, equipId and staffId from the process table");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("An null pointer exception occured when trying to select with conditions for cusId, equipId and staffId from the process table");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() + " exception occured when trying to select with conditions for cusId, equipId and staffId from the process table");
 		}
+		
+		return process;
+		
 	}
 	
-	public void readAll(Connection con) 
+	public ArrayList<DBProcess> readAll(Connection con) 
 	{
 		String sql = "select * from Process;";
+		ArrayList<DBProcess> processes = null;
 		try 
 		{
 			PreparedStatement pStat = con.prepareStatement(sql);
 			ResultSet results = pStat.executeQuery();
-			String output = "";
-			while(results.next()) 
+			
+			if(results.next()) 
 			{
-				output += "\n Customer Id: " + results.getString("cusId") ;
-				output += "\n Equipment Id: " + results.getString("equipId");
-				output += "\n Staff Id: " + results.getString("staffId");
+				processes = new ArrayList<DBProcess>();
 			}
 			
-			System.out.println(output);
+			while(results.next()) 
+			{
+				DBProcess process = new DBProcess() ; 
+				
+				process.setCusId( results.getInt("cusId") ) ;
+				process.setEquipId( results.getInt("equipId") ) ;
+				process.setStaffId( results.getInt("staffId") ) ;
+				
+				processes.add(process);
+			}
+			
+			
 			
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An sql exception occured when trying to select all records from the process table");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("A null pointer exception occured when trying to select all records from the process table");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() + " exception occured when trying to select all records from the process table");
 		}
+		
+		return processes;
 	}
 	
 	public void updateStaffId(int cusId , int equipId, int staffId, int newStaffId , Connection con) 
@@ -163,14 +191,17 @@ public class DBProcess implements Serializable
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An sql exception occured when trying to update a staffId in the process table with conditions for cusId, equipId and staffId");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("A null pointer exception occured when trying to update a staffId in the process table with conditions for cusId, equipId and staffId");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() + "exception occured when trying to update a staffId in the process table with conditions for cusId, equipId and staffId");
 		}
 	}
 	
@@ -187,18 +218,23 @@ public class DBProcess implements Serializable
 			pStat.setInt(2, equipId);
 			pStat.setInt(3, staffId);
 			pStat.execute();
+			
+			logger.info("deleted a record from the process table with customer " + cusId);
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An SQL exception occured when trying to delete a record in the process table with conditions for cusId, equipId and staffId");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("An null pointer exception occured when trying to delete a record in the process table with conditions for cusId, equipId and staffId");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() + "exception occured when trying to delete a record in the process table with conditions for cusId, equipId and staffId");
 		}
 	}
 	

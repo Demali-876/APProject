@@ -5,6 +5,7 @@ import java.sql.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.util.*;
 
 public class DBRequest implements Serializable
 {
@@ -28,8 +29,8 @@ public class DBRequest implements Serializable
 		dateReserved = "";
 		requestStatus = "";
 		cost = 0f;
-		cusId = 0;
-		equipId = 0;
+		cusId = -1;
+		equipId = -1;
 	}
 	
 	public DBRequest(int requestId, int transactionId, String dateRequested, String dateReserved, String requestStatus, float cost, int cusId, int equipId) 
@@ -142,29 +143,34 @@ public class DBRequest implements Serializable
 			pStat.setInt(8, equipId);
 			pStat.execute();
 			
+			logger.info("added a new record to the request table for customer " + cusId );
+			
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
-			logger.fatal("An sql execption occcured when creating a new record in the request table");
+			logger.error("An SQL exception occured when creating a new record in the request table");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
-			
+			logger.error("A null pointer exception occured when creating a new record in the request table");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error(e.getClass().getName() + "exception occured when creating a new record in the request table");
 		}
 		
 		
 	}
 	
-	
-	public void select(int cusId , int equipId, int requestId ,  Connection con) 
+	//This should only return one request
+	public DBRequest select(int cusId , int equipId, int requestId ,  Connection con) 
 	{
 		String sql = "select * from Request where cusId = ? and equipId = ? and requestId = ? ;";
+		DBRequest request = null;
+		
 		try 
 		{
 			PreparedStatement pStat = con.prepareStatement(sql);
@@ -172,71 +178,95 @@ public class DBRequest implements Serializable
 			pStat.setInt(2, equipId);
 			pStat.setInt(3, requestId);
 			ResultSet results = pStat.executeQuery();
-			String output = "";
-			while(results.next()) 
+			
+			if(results.next()) 
 			{
-				output += "\n Customer Id: " + results.getString("cusId") ;
-				output += "\n Equipment Id: " + results.getString("equipId");
-				output += "\n Request Id: " + results.getString("requestId");
-				output += "\n Transaction Id: " + results.getString("transactionId");
-				output += "\n Date Requested (yyyy/mm/dd)"+ ": " + results.getString("dateRequested");
-				output += "\n Date Reserved (yyyy/mm/dd)"+ ": " + results.getString("dateReserved");
-				output += "\n Request Status" + ": " + results.getString("requestStatus");
-				output += "\n Cost "+ ": " + results.getString("cost");
+				request = new DBRequest();
+				request.setCusId( results.getInt("cusId") ) ;
+				request.setEquipId( results.getInt("equipId") ) ;
+				request.setRequestId( results.getInt("requestId") ) ;
+				request.setTransactionId( results.getInt("transactionId") ) ;
+				request.setDateRequested( results.getString("dateRequested") ) ;
+				request.setDateReserved( results.getString("dateReserved") ) ;
+				request.setRequestStatus( results.getString("requestStatus") ) ;
+				request.setCost( results.getFloat("cost") ) ;
 			}
 			
-			System.out.println(output);
+			
 			
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An SQL exception occured when trying to select a record with conditions of cusId, equipId and requestId in the request table");
+
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("A null pointer exception occured when trying to select a record with conditions of cusId, equipId and requestId in the request table");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() + " exception occured when trying to select a record with conditions of cusId, equipId and requestId in the request table");
 		}
+		
+		return request;
 	}
 	
-	public void readAll(Connection con) 
+	public ArrayList<DBRequest> readAll(Connection con) 
 	{
 		String sql = "select * from Request ;";
+		ArrayList<DBRequest> requests  = null;
 		try 
 		{
 			PreparedStatement pStat = con.prepareStatement(sql);
 			ResultSet results = pStat.executeQuery();
-			String output = "";
-			while(results.next()) 
+			
+			if(results.next()) 
 			{
-				output += "\n Customer Id: " + results.getString("cusId") ;
-				output += "\n Equipment Id: " + results.getString("equipId");
-				output += "\n Request Id: " + results.getString("requestId");
-				output += "\n Transaction Id: " + results.getString("transactionId");
-				output += "\n Date Requested (yyyy/mm/dd)"+ ": " + results.getString("dateRequested");
-				output += "\n Date Reserved (yyyy/mm/dd)"+ ": " + results.getString("dateReserved");
-				output += "\n Request Status" + ": " + results.getString("requestStatus");
-				output += "\n Cost "+ ": " + results.getString("cost");
+				requests  = new ArrayList<DBRequest>();
 			}
 			
-			System.out.println(output);
+			while(results.next()) 
+			{
+				
+				DBRequest request = new DBRequest();
+				
+				request.setCusId( results.getInt("cusId") ) ;
+				request.setEquipId( results.getInt("equipId") ) ;
+				request.setRequestId( results.getInt("requestId") ) ;
+				request.setTransactionId( results.getInt("transactionId") ) ;
+				request.setDateRequested( results.getString("dateRequested") ) ;
+				request.setDateReserved( results.getString("dateReserved") ) ;
+				request.setRequestStatus( results.getString("requestStatus") ) ;
+				request.setCost( results.getFloat("cost") ) ;
+				
+				requests.add(request);
+				
+			}
 			
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An SQL exception occured when trying to select all records from the request table");
+
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("An null pointer exception occured when trying to select all records from the request table");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error(e.getClass().getName() + " exception occured when trying to select all records from the request table");
 		}
+		
+		return requests;
+		
 	}
 	
 	
@@ -258,14 +288,17 @@ public class DBRequest implements Serializable
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An SQL exception occured when trying to update records from the request table with conditions for cusId , equipId and requestId");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("An null pointer exception occured when trying to update records from the request table with conditions for cusId , equipId and requestId");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() +  " exception occured when trying to update records from the request table with conditions for cusId , equipId and requestId");
 		}
 	}
 	
@@ -280,18 +313,23 @@ public class DBRequest implements Serializable
 			pStat.setInt(2, equipId);
 			pStat.setInt(3, requestId);
 			pStat.execute();
+			
+			logger.info("deleted a record from the request table with customer " + cusId);
 		}
 		catch(SQLException e) 
 		{
 			e.printStackTrace();
+			logger.error("An SQL exception occured when trying delete a record from the request table with conditions for cusId , equipId and requestId");
 		}
 		catch(NullPointerException e) 
 		{
 			e.printStackTrace();
+			logger.error("A null pointer exception occured when trying delete a record from the request table with conditions for cusId , equipId and requestId");
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
+			logger.error( e.getClass().getName() + "exception occured when trying delete a record from the request table with conditions for cusId , equipId and requestId");
 		}
 	}
 	
