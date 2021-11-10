@@ -1,14 +1,22 @@
 package view;
+import java.util.List;
+
 import javax.swing.JInternalFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class ViewInventoryFrame extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
-	private String[] columnNames;
-	private String[] rowData;
+	private JTable table;
+	private JScrollPane jsp;
 	
-	public ViewInventoryFrame() {
+	public ViewInventoryFrame(List<Equipment> list) {
 		super("Equipment Inventory",true,true,true,true);
-		//implement table model and table
+		EquipmentTableModel model = new EquipmentTableModel(list);
+		table = new JTable(model);
+		jsp = new JScrollPane(table);
+		
+		this.add(jsp);
 		this.setSize(500,500);
 		this.setVisible(true);
 	}
