@@ -269,6 +269,61 @@ public class DBRequest implements Serializable
 		
 	}
 	
+	public ArrayList<DBRequest> selectByCusId(Connection con , int cusId) 
+	{
+		String sql = "select * from Request where cusId = ? ;";
+		ArrayList<DBRequest> requests  = null;
+		try 
+		{
+			PreparedStatement pStat = con.prepareStatement(sql);
+			pStat.setInt(1, cusId);
+			ResultSet results = pStat.executeQuery();
+			
+			if(results.next()) 
+			{
+				requests  = new ArrayList<DBRequest>();
+			}
+			
+			while(results.next()) 
+			{
+				
+				DBRequest request = new DBRequest();
+				
+				request.setCusId( results.getInt("cusId") ) ;
+				request.setEquipId( results.getInt("equipId") ) ;
+				request.setRequestId( results.getInt("requestId") ) ;
+				request.setTransactionId( results.getInt("transactionId") ) ;
+				request.setDateRequested( results.getString("dateRequested") ) ;
+				request.setDateReserved( results.getString("dateReserved") ) ;
+				request.setRequestStatus( results.getString("requestStatus") ) ;
+				request.setCost( results.getFloat("cost") ) ;
+				
+				requests.add(request);
+				
+			}
+			
+		}
+		catch(SQLException e) 
+		{
+			e.printStackTrace();
+			logger.error("An SQL exception occured when trying to select records with the same cusId from the request table");
+
+		}
+		catch(NullPointerException e) 
+		{
+			e.printStackTrace();
+			logger.error("An null pointer exception occured when trying to select records with the same cusId from the request table");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(e.getClass().getName() + " exception occured when trying to select records with the same cusId from the request table");
+		}
+		
+		return requests;
+		
+	}
+	
 	
 	
 	// for some of these where we try to identify a record i'm using multiple where because its possible to have the same customer two times for example due to it being a many to many relationship table 
