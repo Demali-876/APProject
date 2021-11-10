@@ -1,9 +1,11 @@
 package view;
 import javax.swing.JFrame;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,6 +30,7 @@ public class GrizzlyApp{
 	private JPasswordField password;
 	private JPanel userIdPanel;
 	private JPanel passwordPanel;
+	private JPanel loginTypePanel;
 	private JPanel buttonPanel;
 	private JDesktopPane desktop;
 	private JMenuBar menuBar;
@@ -40,6 +43,8 @@ public class GrizzlyApp{
 	private JMenuItem scheduleEquipment;
 	private JMenuItem transDoc;
 	private JMenuItem save;
+	private JRadioButton cusButton;
+	private JRadioButton empButton;
 	
 	public GrizzlyApp() {
 		initializeLoginComponents();
@@ -56,14 +61,21 @@ public class GrizzlyApp{
 		button = new JButton("Login");
 		userIdLabel = new JLabel("User ID: ");
 		passwordLabel = new JLabel("Password: ");
+		cusButton = new JRadioButton("Customer");
+		empButton = new JRadioButton("Employee");
 		userIdTF = new JTextField(20);
 		password = new JPasswordField(20);
 		userIdPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		userIdPanel.setSize(new Dimension(450,30));
 		passwordPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		passwordPanel.setSize(new Dimension(450,30));
+		loginTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		loginTypePanel.setSize(new Dimension(450,30));
 		buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.setSize(new Dimension(450,30));
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(cusButton);
+		bg.add(empButton);
 	}
 	
 	public void addLoginPanel() {//add the components into their respective panels
@@ -73,12 +85,16 @@ public class GrizzlyApp{
 		passwordPanel.add(passwordLabel);
 		passwordPanel.add(password);
 		
+		loginTypePanel.add(cusButton);
+		loginTypePanel.add(empButton);
+		
 		buttonPanel.add(button);
 	}
 	
 	public void configFrame() {//add components to the frame to finish setting up frame
 		frame.add(userIdPanel);
 		frame.add(passwordPanel);
+		frame.add(loginTypePanel);
 		frame.add(buttonPanel);
 		frame.setSize(350,150);
 		frame.setVisible(true);
@@ -94,12 +110,12 @@ public class GrizzlyApp{
 				JOptionPane.showMessageDialog(null, "Login Succesful");
 				initializeDashboardComponents();
 				registerDashboardListeners();
-				if(userIdTF.getText().contains("CUS")) {
+				if(cusButton.isSelected()) {
 					initializeCustomerComponents();
 					registerCustomerListeners();
 					addToMenuBar();
 					DashboardFrame();
-				}else if(userIdTF.getText().contains("EMP")) {
+				}else if(empButton.isSelected()) {
 					initializeEmployeeComponents();
 					registerEmployeeListeners();
 					addToMenuBar();
@@ -216,14 +232,14 @@ public class GrizzlyApp{
 		rentEquipment.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				desktop.add(new RentEquipmentFrame());
+				//desktop.add(new RentEquipmentFrame());
 			}
 		});
 		
 		viewTransaction.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				desktop.add(new ViewTransactionFrame());
+				//desktop.add(new ViewTransactionFrame());
 			}
 		});
 	}
@@ -233,14 +249,14 @@ public class GrizzlyApp{
 		viewRentRequest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				desktop.add(new ViewRentRequestFrame());
+				//desktop.add(new ViewRentRequestFrame());
 			}
 		});
 		
 		viewInventory.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				desktop.add(new ViewInventoryFrame());
+				//desktop.add(new ViewInventoryFrame());
 			}
 		});
 		
@@ -257,5 +273,9 @@ public class GrizzlyApp{
 				desktop.add(new TransactionDocumentFrame());
 			}
 		});
+	}
+	
+	public static void main(String[] args) {
+		new GrizzlyApp();
 	}
 }
