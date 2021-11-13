@@ -328,16 +328,19 @@ public class DBRequest implements Serializable
 	
 	// for some of these where we try to identify a record i'm using multiple where because its possible to have the same customer two times for example due to it being a many to many relationship table 
 	
-	public void updateRequestStatus(String requestStatus , int cusId , int equipId, int requestId ,  Connection con) 
+	//for when employee gets to this enquiry
+	public void updateByEmployee(String requestStatus , float cost, int transactionId , int cusId , int equipId, int requestId ,  Connection con) 
 	{
-		String sql = "update Request set requestStatus = ? where cusId = ? and equipId = ? and requestId = ? ;";
+		String sql = "update Request set requestStatus = ? , cost = ?, transactionId = ? where cusId = ? and equipId = ? and requestId = ? ;";
 		try 
 		{
 			PreparedStatement pStat = con.prepareStatement(sql);
 			pStat.setString(1, requestStatus);
-			pStat.setInt(2, cusId);
-			pStat.setInt(3, equipId);
-			pStat.setInt(4, requestId );
+			pStat.setFloat(2, cost);
+			pStat.setInt(3, transactionId);
+			pStat.setInt(4, cusId);
+			pStat.setInt(5, equipId);
+			pStat.setInt(6, requestId );
 			pStat.execute();
 		}
 		catch(SQLException e) 
@@ -356,6 +359,38 @@ public class DBRequest implements Serializable
 			logger.error( e.getClass().getName() +  " exception occured when trying to update records from the request table with conditions for cusId , equipId and requestId");
 		}
 	}
+	
+	// in case date reserved needs to be changed
+	public void updateDateReserved(String dateReserved , int cusId , int equipId, int requestId ,  Connection con) 
+	{
+		String sql = "update Request set dateReserved = ? where cusId = ? and equipId = ? and requestId = ? ;";
+		try 
+		{
+			PreparedStatement pStat = con.prepareStatement(sql);
+			pStat.setString(1, dateReserved);
+			pStat.setInt(2, cusId);
+			pStat.setInt(3, equipId);
+			pStat.setInt(4, requestId );
+			pStat.execute();
+		}
+		catch(SQLException e) 
+		{
+			e.printStackTrace();
+			logger.error("An SQL exception occured when trying to update dateReserved from the request table with conditions for cusId , equipId and requestId");
+		}
+		catch(NullPointerException e) 
+		{
+			e.printStackTrace();
+			logger.error("An null pointer exception occured when trying to update dateReserved from the request table with conditions for cusId , equipId and requestId");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error( e.getClass().getName() +  " exception occured when trying to update dateReserved from the request table with conditions for cusId , equipId and requestId");
+		}
+	}
+	
+	
 	
 	
 	public void delete(int cusId, int equipId, int requestId, Connection con) 
