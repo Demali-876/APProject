@@ -32,6 +32,9 @@ import server.Equipment;
 import server.DBRequest;
 import server.Customer;
 import server.Employee;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class GrizzlyApp{
 	private JFrame frame;
@@ -62,14 +65,27 @@ public class GrizzlyApp{
 	private Socket conSocket;
 	private int id;
 	
-	public GrizzlyApp() {
+	private static final Logger logger = LogManager.getLogger(Customer.class);
+	
+	
+	public GrizzlyApp() 
+	{
 		try {
 			conSocket = new Socket("127.0.0.1",8000);
 			oos = new ObjectOutputStream(conSocket.getOutputStream());
 			ois = new ObjectInputStream(conSocket.getInputStream());
-		}catch(IOException e) {
-			e.printStackTrace();
 		}
+		catch(IOException e) 
+		{
+			e.printStackTrace();
+			logger.error("An IO exception occured when trying to create a new grizzly app object ");
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			logger.error(  e.getClass().getName() +  " exception occured when trying to create a new grizzly app object");
+		}
+		
 		
 		initializeLoginComponents();
 		registerLoginButtonListener();
@@ -140,6 +156,7 @@ public class GrizzlyApp{
 					oos.writeObject("Exit");
 				}catch(IOException ex) {
 					ex.printStackTrace();
+					logger.error("An IO exception occured when trying to send a signal to the server that the main window is exiting");
 				}finally {
 					closeConnection();
 				}
@@ -194,6 +211,7 @@ public class GrizzlyApp{
 					    }catch(NumberFormatException exc) {
 					    	JOptionPane.showMessageDialog(frame,"ID must contain only numbers",
 					    			"Error",JOptionPane.ERROR_MESSAGE);
+					    	logger.error("A number format exception occured during log in due to an incorrect id");
 					    	return;
 					    }
 					    oos.writeObject(password.getPassword());
@@ -209,10 +227,12 @@ public class GrizzlyApp{
 					    }else {
 					    	JOptionPane.showMessageDialog(frame,"Incorrect UserID or Password",
 					    			"Login Failed",JOptionPane.INFORMATION_MESSAGE);
+					    	
 					    	return;
 					    }
 					}catch(IOException ex) {
 						ex.printStackTrace();
+						logger.error("An io exception occured");
 					}catch(ClassNotFoundException ex) {
 						ex.printStackTrace();
 					}catch(ClassCastException ex) {
@@ -446,11 +466,14 @@ public class GrizzlyApp{
 	}
 	
 	private void closeConnection() {
-		try {
+		try 
+		{
 			oos.close();
 			ois.close();
 			conSocket.close();
-		}catch(IOException e) {
+		}
+		catch(IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}
