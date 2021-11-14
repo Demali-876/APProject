@@ -1,1 +1,1 @@
-[ERROR] 2021-11-14 09:01:31.537 [Thread-0] DBRequest - An SQL exception occured when creating a new record in the request table
+[INFO ] 2021-11-14 16:43:45.924 [Thread-5] DBRequest - added a new record to the request table for customer 100
