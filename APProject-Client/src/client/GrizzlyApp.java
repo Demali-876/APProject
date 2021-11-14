@@ -65,7 +65,7 @@ public class GrizzlyApp{
 	private Socket conSocket;
 	private int id;
 	
-	private static final Logger logger = LogManager.getLogger(Customer.class);
+	private static final Logger logger = LogManager.getLogger(GrizzlyApp.class);
 	
 	
 	public GrizzlyApp() 
@@ -218,6 +218,7 @@ public class GrizzlyApp{
 					    if((boolean)ois.readObject() == true) {
 					    	id = Integer.parseInt(userIdTF.getText());
 					    	JOptionPane.showMessageDialog(null, "Login Succesful");
+					    	logger.info("A customer has logged unto the system with id: " + id );
 							initializeDashboardComponents();
 							registerDashboardListeners();
 							initializeCustomerComponents();
@@ -232,11 +233,13 @@ public class GrizzlyApp{
 					    }
 					}catch(IOException ex) {
 						ex.printStackTrace();
-						logger.error("An io exception occured");
+						logger.error("An IO exception occured when attempting login");
 					}catch(ClassNotFoundException ex) {
 						ex.printStackTrace();
+						logger.error("A ClassNotFound exception occured when attempting login");
 					}catch(ClassCastException ex) {
 						ex.printStackTrace();
+						logger.error("A ClassCast exception occured when attempting login");
 					}
 				}else if(empButton.isSelected()) {
 					try {
@@ -252,6 +255,7 @@ public class GrizzlyApp{
 					    if((boolean)ois.readObject() == true) {
 					    	id = Integer.parseInt(userIdTF.getText());
 					    	JOptionPane.showMessageDialog(null, "Login Succesful");
+					    	logger.info("An employee has logged unto the system with id: " + id);
 							initializeDashboardComponents();
 							registerDashboardListeners();
 							initializeEmployeeComponents();
@@ -265,10 +269,13 @@ public class GrizzlyApp{
 					    }
 					}catch(IOException ex) {
 						ex.printStackTrace();
+						logger.error("An IO exception occured when attempting login");
 					}catch(ClassNotFoundException ex) {
 						ex.printStackTrace();
+						logger.error("A ClassNotFound exception occured when attempting login");
 					}catch(ClassCastException ex) {
 						ex.printStackTrace();
+						logger.error("A ClassCast exception occured when attempting login");
 					}
 				}
 			}
@@ -388,10 +395,13 @@ public class GrizzlyApp{
 				    desktop.add(new RentEquipmentFrame((List<Equipment>)ois.readObject(),oos,ois,id));
 				}catch(IOException ex) {
 					ex.printStackTrace();
+					logger.error("An IO exception occured when viewing the list of equipment as a customer");
 				}catch(ClassNotFoundException ex) {
 					ex.printStackTrace();
+					logger.error("An ClassNotFound exception occured when viewing the list of equipment as a customer");
 				}catch(ClassCastException ex) {
 					ex.printStackTrace();
+					logger.error("An ClassCast exception occured when viewing the list of equipment as a customer");
 				}
 			}
 		});
@@ -405,10 +415,13 @@ public class GrizzlyApp{
 				    desktop.add(new ViewTransactionFrame((List<DBRequest>)ois.readObject()));
 				}catch(IOException ex) {
 					ex.printStackTrace();
+					logger.error("An IO exception occured when viewing the list of transactions as a customer");
 				}catch(ClassNotFoundException ex) {
 					ex.printStackTrace();
+					logger.error("An ClassNotFound exception occured when viewing the list of transactions as a customer");
 				}catch(ClassCastException ex) {
 					ex.printStackTrace();
+					logger.error("A ClassCast exception occured when viewing the list of transactions as a customer");
 				}
 			}
 		});
@@ -425,10 +438,13 @@ public class GrizzlyApp{
 				    desktop.add(new ViewRentRequestFrame((List<DBRequest>)ois.readObject()));
 				}catch(IOException ex) {
 					ex.printStackTrace();
+					logger.error("An IO exception occured when viewing the list of rent requests as an employee");
 				}catch(ClassNotFoundException ex) {
 					ex.printStackTrace();
+					logger.error("An ClassNotFound exception occured when viewing the list of rent requests as an employee");
 				}catch(ClassCastException ex) {
 					ex.printStackTrace();
+					logger.error("An ClassCast exception occured when viewing the list of rent requests as an employee");
 				}
 			}
 		});
@@ -442,10 +458,13 @@ public class GrizzlyApp{
 				    desktop.add(new ViewInventoryFrame((List<Equipment>)ois.readObject()));
 				}catch(IOException ex) {
 					ex.printStackTrace();
+					logger.error("An IO exception occured when viewing the list of rental equipment as an employee");
 				}catch(ClassNotFoundException ex) {
 					ex.printStackTrace();
+					logger.error("An ClassNotFound exception occured when viewing the list of rental equipment as an employee");
 				}catch(ClassCastException ex) {
 					ex.printStackTrace();
+					logger.error("A ClassCast exception occured when viewing the list of rental equipment as an employee");
 				}
 			}
 		});

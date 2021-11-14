@@ -18,6 +18,8 @@ import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.awt.event.ActionEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ScheduleEquipmentFrame extends JInternalFrame{
 	private static final long serialVersionUID = 1L;
@@ -39,6 +41,8 @@ public class ScheduleEquipmentFrame extends JInternalFrame{
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
 	private int empId;
+	
+	private static final Logger logger = LogManager.getLogger(ScheduleEquipmentFrame.class);
 	
 	public ScheduleEquipmentFrame(ObjectOutputStream oos,ObjectInputStream ois,int id) {
 		super("Equipment Scheduler",true,true,true,true);
@@ -129,6 +133,7 @@ public class ScheduleEquipmentFrame extends JInternalFrame{
 					}catch(NumberFormatException ex) {
 						JOptionPane.showMessageDialog(getParent(),"Request Id must contain only"
 								+ "numbers","Error",JOptionPane.ERROR_MESSAGE);
+						logger.error("A number format exception occured in the user interface to schedule equipment for entered values");
 						return;
 					}
 					try {
@@ -136,6 +141,7 @@ public class ScheduleEquipmentFrame extends JInternalFrame{
 					}catch(NumberFormatException ex) {
 						JOptionPane.showMessageDialog(getParent(),"Customer Id must contain only"
 								+ "numbers","Error",JOptionPane.ERROR_MESSAGE);
+						logger.error("A number format exception occured in the user interface to schedule equipment for entered values");
 						return;
 					}
 					try {
@@ -143,6 +149,7 @@ public class ScheduleEquipmentFrame extends JInternalFrame{
 					}catch(NumberFormatException ex) {
 						JOptionPane.showMessageDialog(getParent(),"Equipment Id must contain only"
 								+ "numbers","Error",JOptionPane.ERROR_MESSAGE);
+						logger.error("A number format exception occured in the user interface to schedule equipment for entered values");
 						return;
 					}
 					try {
@@ -151,6 +158,7 @@ public class ScheduleEquipmentFrame extends JInternalFrame{
 					catch(NumberFormatException ex) {
 						JOptionPane.showMessageDialog(getParent(),"Enter a valid cost","Error",
 								JOptionPane.ERROR_MESSAGE);
+						logger.error("A number format exception occured in the user interface to schedule equipment for entered values");
 						return;
 					}
 					request.setReturnDate(String.valueOf(dateReturn.getValue()));
@@ -167,10 +175,13 @@ public class ScheduleEquipmentFrame extends JInternalFrame{
 					}
 				}catch(IOException ex) {
 					ex.printStackTrace();
+					logger.error("An IO exception occured in the user interface to schedule equipment when making request to the server ");
 				}catch(ClassNotFoundException ex) {
 					ex.printStackTrace();
+					logger.error("A ClassNotFound exception occured in the user interface to schedule equipment when making a request to the server");
 				}catch(ClassCastException ex) {
 					ex.printStackTrace();
+					logger.error("An ClassCast exception occured in the user interface to schedule equipment when making a request to the server");
 				}
 			}
 		});

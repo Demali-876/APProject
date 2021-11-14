@@ -21,8 +21,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerDateModel;
 import javax.swing.JSpinner.DateEditor;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import server.Equipment;
+import server.Customer;
 import server.DBRequest;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RentEquipmentFrame extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +42,8 @@ public class RentEquipmentFrame extends JInternalFrame {
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
 	private int cusId;
+	
+	private static final Logger logger = LogManager.getLogger(RentEquipmentFrame.class);
 	
 	public RentEquipmentFrame(List<Equipment> list,ObjectOutputStream oos,ObjectInputStream ois,
 			int id) {
@@ -87,14 +96,20 @@ public class RentEquipmentFrame extends JInternalFrame {
 					
 				}catch(IOException ex) {
 					ex.printStackTrace();
+					logger.error("An IO exception occured when setting up the user interface for selecting rental equipment");
 				}catch(ClassNotFoundException ex) {
 					ex.printStackTrace();
+					logger.error("A ClassNotFound exception occured when setting up the user interface for selecting rental equipment");
 				}catch(ClassCastException ex) {
 					ex.printStackTrace();
+					logger.error("A ClassCast exception occured when setting up the user interface for selecting rental equipment");
 				}catch(IndexOutOfBoundsException ex) {
 					JOptionPane.showMessageDialog(button,"Please select an item","Error",JOptionPane.ERROR_MESSAGE);
+					logger.error("An IndexOutOfBounds exception occured when setting up the user interface for selecting rental equipment");
 				}catch(Exception ex) {
 					ex.printStackTrace();
+					logger.error(  e.getClass().getName() + " exception occured when setting up the user interface for selecting rental equipment");
+					
 				}
 			}
 		});

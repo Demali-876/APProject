@@ -11,12 +11,18 @@ import java.util.List;
 import server.Employee.SessionFactoryBuilderEmployee;
 import server.Equipment.SessionFactoryBuilderEquipment;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ThreadHandler implements Runnable{
 	public final static long serialVersionUID = 1L;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
 	private Socket conSocket;
 	private Customer cus;
+	
+	private static final Logger logger = LogManager.getLogger(ThreadHandler.class);
+
 	
 	public ThreadHandler(Socket socket) {
 		conSocket = socket;
@@ -108,10 +114,13 @@ public class ThreadHandler implements Runnable{
 			ois.close();
 		}catch(IOException e) {
 			e.printStackTrace();
+			logger.error( " An IO exception occured when receiving requests from the client ");
 		}catch(ClassNotFoundException e) {
 			e.printStackTrace();
+			logger.error( " A ClassNotFound occured when receiving requests from the client ");
 		}catch(ClassCastException e) {
 			e.printStackTrace();
+			logger.error( " An ClassCast exception occured when receiving requests from the client ");
 		}
 	}
 }
