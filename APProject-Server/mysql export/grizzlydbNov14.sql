@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 14, 2021 at 03:31 PM
+-- Generation Time: Nov 15, 2021 at 02:32 AM
 -- Server version: 10.4.21-MariaDB
--- PHP Version: 8.0.11
+-- PHP Version: 7.4.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -39,7 +39,8 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`CusName`, `CusPassword`, `CusAccBal`, `CusID`) VALUES
-('Nicholai', 'password', 0, 100);
+('Nicholai', 'password', 0, 100),
+('Bobby', 'password', 0, 150);
 
 -- --------------------------------------------------------
 
@@ -83,8 +84,24 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`EquipID`, `EquipName`, `EquipStatus`, `EquipCategory`) VALUES
-(1, 'Stage Lights', 'Unavailable', 'Lighting'),
-(2, 'Speakers', 'Unavailable', 'Sound');
+(1, 'Stage Lights', 'available', 'Lighting'),
+(2, 'Speakers', 'available', 'Sound'),
+(3, 'generator', 'available', 'Power'),
+(4, 'plastic table ', 'available', 'staging'),
+(5, 'Heavy Duty Generator', 'Unavailable', 'power');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `process`
+--
+
+CREATE TABLE `process` (
+  `CusID` int(11) NOT NULL,
+  `EquipID` int(11) NOT NULL,
+  `EmpID` int(11) NOT NULL,
+  `requestID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -100,9 +117,9 @@ CREATE TABLE `request` (
   `RequestStatus` varchar(50) DEFAULT NULL,
   `TransactionID` int(11) DEFAULT NULL,
   `RequestCost` int(11) DEFAULT NULL,
-  `CusID` int(11) DEFAULT NULL,
-  `EquipID` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `CusID` int(11) NOT NULL,
+  `EquipID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `request`
@@ -111,7 +128,11 @@ CREATE TABLE `request` (
 INSERT INTO `request` (`RequestID`, `RequestDate`, `ReserveDate`, `ReturnDate`, `RequestStatus`, `TransactionID`, `RequestCost`, `CusID`, `EquipID`) VALUES
 (1, 'Sat Nov 13 12:08:54 COT 2021', 'Sat Nov 13 17:50:48 COT 2021', 'Sat Nov 13 17:50:48 COT 2021', '1', 1, 1, 100, 1),
 (2, 'Sat Nov 13 12:08:54 COT 2021', 'Sat Nov 13 17:52:30 COT 2021', 'Sat Nov 13 17:52:30 COT 2021', '2', 2, 100, 100, 2),
-(3, 'Fri Nov 19 00:00:00 COT 2021', '', '', 'Pending', 3, 0, 100, 2);
+(3, 'Fri Nov 19 00:00:00 COT 2021', '', '', 'Pending', 3, 0, 100, 2),
+(6, 'Fri Jan 21 00:00:00 GMT-05:00 2022', '', '', 'Pending', 6, 0, 100, 2),
+(4, 'Fri Nov 19 00:00:00 GMT-05:00 2021', 'Sat Nov 20 00:00:00 GMT-05:00 2021', 'Thu Nov 25 00:00:00 GMT-05:00 2021', '', 4, 200, 100, 3),
+(5, 'Tue Dec 21 00:00:00 GMT-05:00 2021', '', '', 'Pending', 5, 0, 100, 3),
+(7, 'Tue Dec 14 00:00:00 GMT-05:00 2021', 'Sat Nov 20 00:00:00 GMT-05:00 2021', 'Mon Feb 14 00:00:00 GMT-05:00 2022', '', 7, 500, 100, 5);
 
 --
 -- Indexes for dumped tables
@@ -136,10 +157,38 @@ ALTER TABLE `equipment`
   ADD PRIMARY KEY (`EquipID`);
 
 --
+-- Indexes for table `process`
+--
+ALTER TABLE `process`
+  ADD PRIMARY KEY (`CusID`,`EquipID`,`EmpID`,`requestID`),
+  ADD KEY `fkEquipmentt` (`EquipID`),
+  ADD KEY `fkEmployee` (`EmpID`);
+
+--
 -- Indexes for table `request`
 --
 ALTER TABLE `request`
-  ADD PRIMARY KEY (`RequestID`);
+  ADD PRIMARY KEY (`CusID`,`EquipID`,`RequestID`),
+  ADD KEY `fkEquipment` (`EquipID`);
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `process`
+--
+ALTER TABLE `process`
+  ADD CONSTRAINT `fkCustomert` FOREIGN KEY (`CusID`) REFERENCES `customer` (`CusID`),
+  ADD CONSTRAINT `fkEmployee` FOREIGN KEY (`EmpID`) REFERENCES `employee` (`EmpID`),
+  ADD CONSTRAINT `fkEquipmentt` FOREIGN KEY (`EquipID`) REFERENCES `equipment` (`EquipID`);
+
+--
+-- Constraints for table `request`
+--
+ALTER TABLE `request`
+  ADD CONSTRAINT `fkCustomer` FOREIGN KEY (`CusID`) REFERENCES `customer` (`CusID`),
+  ADD CONSTRAINT `fkEquipment` FOREIGN KEY (`EquipID`) REFERENCES `equipment` (`EquipID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
