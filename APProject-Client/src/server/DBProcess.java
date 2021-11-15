@@ -66,7 +66,7 @@ public class DBProcess implements Serializable
 	
 	public void create(Connection con) 
 	{
-		String sql = "insert into Process(empId, cusId, equipId , requestID) values( ? , ?, ? ) ; ";
+		String sql = "insert into Process(empId, cusId, equipId , requestID) values( ? , ?, ? , ? ) ; ";
 		
 		try
 		{
