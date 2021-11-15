@@ -25,7 +25,7 @@ public class DBProcess implements Serializable
 		requestId = -1;
 	}
 	
-	public DBProcess(int staffId, int cusId, int equipId) 
+	public DBProcess(int staffId, int cusId, int equipId, int requestId) 
 	{
 		this.empId = staffId;
 		this.cusId = cusId;
@@ -53,9 +53,9 @@ public class DBProcess implements Serializable
 		return cusId;
 	}
 	
-	public void setRequestId(int cusId) 
+	public void setRequestId(int requestId) 
 	{
-		this.cusId = cusId;
+		this.requestId = requestId;
 	}
 	
 	public int getRequestId() 
@@ -66,7 +66,7 @@ public class DBProcess implements Serializable
 	
 	public void create(Connection con) 
 	{
-		String sql = "insert into Process(empId, cusId, equipId , requestID) values( ? , ?, ? ) ; ";
+		String sql = "insert into Process(empId, cusId, equipId , requestID) values( ? , ?, ? , ? ) ; ";
 		
 		try
 		{
